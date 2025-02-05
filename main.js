@@ -86,9 +86,29 @@ window.addEventListener("click", () => {
   }
 });
 
-// ✅ Animation Loop - Moving Stars & Asteroids
-function animate() {
-  requestAnimationFrame(animate);
+// Snippet #7 - Warp Speed & Effects (Final Fix)
+let isWarping = false;  // ✅ Declare only once
+let warpSpeed = 0;
+const maxWarpSpeed = 50;
+const acceleration = 0.5;
+
+// ✅ Click to Start Warp - No duplicate declarations
+window.addEventListener("click", () => {
+  if (!isWarping) {
+    isWarping = true;
+    warpSpeed = 5; // Initial Speed
+    document.body.style.transition = "filter 0.5s"; // Start Blur Effect
+    document.body.style.filter = "blur(2px)";
+
+    // Remove Blur After Warp Starts
+    setTimeout(() => {
+      document.body.style.filter = "blur(0px)";
+    }, 500);
+  }
+});
+
+animate();
+
 
   // ✅ The Main Animation Loop (Runs Continuously)
 function animate() {
@@ -223,28 +243,6 @@ if (isWarping) {
   renderer.render(scene, camera);
 }
 
-// Snippet #7 - Warp Speed & Effects (Final Fix)
-let isWarping = false;  // ✅ Declare only once
-let warpSpeed = 0;
-const maxWarpSpeed = 50;
-const acceleration = 0.5;
-
-// ✅ Click to Start Warp - No duplicate declarations
-window.addEventListener("click", () => {
-  if (!isWarping) {
-    isWarping = true;
-    warpSpeed = 5; // Initial Speed
-    document.body.style.transition = "filter 0.5s"; // Start Blur Effect
-    document.body.style.filter = "blur(2px)";
-
-    // Remove Blur After Warp Starts
-    setTimeout(() => {
-      document.body.style.filter = "blur(0px)";
-    }, 500);
-  }
-});
-
-animate();
 
 // ✅ Handle Resizing
 window.addEventListener("resize", () => {
