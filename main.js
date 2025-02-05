@@ -3,7 +3,7 @@
 // Setup Three.js Scene
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true }); // Enable antialiasing for smoother edges
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -15,10 +15,10 @@ let moveDown = false;
 const speed = 2; // Movement Speed
 
 // ✅ Event Listeners for Arrow Buttons
-document.getElementById("left").addEventListener("mousedown", () => moveLeft = true);
-document.getElementById("right").addEventListener("mousedown", () => moveRight = true);
-document.getElementById("up").addEventListener("mousedown", () => moveUp = true);
-document.getElementById("down").addEventListener("mousedown", () => moveDown = true);
+document.getElementById("left")?.addEventListener("mousedown", () => moveLeft = true);
+document.getElementById("right")?.addEventListener("mousedown", () => moveRight = true);
+document.getElementById("up")?.addEventListener("mousedown", () => moveUp = true);
+document.getElementById("down")?.addEventListener("mousedown", () => moveDown = true);
 
 document.addEventListener("mouseup", () => {
   moveLeft = false;
