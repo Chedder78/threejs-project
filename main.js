@@ -7,13 +7,14 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Snippet #3 - Arrow Button Controls
+// ✅ Movement Controls (Snippet #3)
 let moveLeft = false;
 let moveRight = false;
 let moveUp = false;
 let moveDown = false;
+const speed = 2; // Movement Speed
 
-// ✅ Event Listeners for Movement
+// ✅ Event Listeners for Arrow Buttons
 document.getElementById("left").addEventListener("mousedown", () => moveLeft = true);
 document.getElementById("right").addEventListener("mousedown", () => moveRight = true);
 document.getElementById("up").addEventListener("mousedown", () => moveUp = true);
@@ -26,27 +27,26 @@ document.addEventListener("mouseup", () => {
   moveDown = false;
 });
 
-// ✅ Add Lighting
+// ✅ Lighting
 const light = new THREE.PointLight(0xffffff, 1.5, 100);
 light.position.set(10, 10, 10);
 scene.add(light);
 
-// ✅ Create Stars 🌟
+// ✅ Create Stars (Snippet #5)
 const starGeometry = new THREE.BufferGeometry();
 const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2 });
 
 const starPositions = [];
-for (let i = 0; i < 500; i++) { // More stars for better effect
+for (let i = 0; i < 500; i++) { 
   starPositions.push((Math.random() - 0.5) * 1000);
   starPositions.push((Math.random() - 0.5) * 1000);
   starPositions.push((Math.random() - 0.5) * 1000);
 }
 starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-
 const starField = new THREE.Points(starGeometry, starMaterial);
 scene.add(starField);
 
-// ✅ Create a Nebula Cloud 🌫️
+// ✅ Create Nebula (Snippet #5)
 const nebulaGeometry = new THREE.SphereGeometry(60, 32, 32);
 const nebulaMaterial = new THREE.MeshStandardMaterial({
   color: 0x443355,
@@ -57,12 +57,11 @@ const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
 nebula.position.set(0, 0, -200);
 scene.add(nebula);
 
-// ✅ Create Floating Asteroids 🪨
+// ✅ Create Floating Asteroids (Snippet #6)
 const asteroids = [];
 for (let i = 0; i < 15; i++) {
   const geometry = new THREE.SphereGeometry(Math.random() * 2, 32, 32);
   const material = new THREE.MeshStandardMaterial({ color: 0x888888 });
-
   const asteroid = new THREE.Mesh(geometry, material);
   asteroid.position.set(
     (Math.random() - 0.5) * 300,
@@ -73,156 +72,66 @@ for (let i = 0; i < 15; i++) {
   asteroids.push(asteroid);
 }
 
-// ✅ Set Initial Camera Position
-camera.position.z = 50;
-let warpSpeed = 0;
+// ✅ Warp Speed Variables (Snippet #7)
 let isWarping = false;
-
-// ✅ Click to Warp Forward 🚀
-window.addEventListener("click", () => {
-  if (!isWarping) {
-    isWarping = true;
-    warpSpeed = 0.5;
-  }
-});
-
-// Snippet #7 - Warp Speed & Effects (Final Fix)
-let isWarping = false;  // ✅ Declare only once
 let warpSpeed = 0;
 const maxWarpSpeed = 50;
 const acceleration = 0.5;
 
-// ✅ Click to Start Warp - No duplicate declarations
+// ✅ Click to Warp Forward (Snippet #7)
 window.addEventListener("click", () => {
   if (!isWarping) {
     isWarping = true;
     warpSpeed = 5; // Initial Speed
-    document.body.style.transition = "filter 0.5s"; // Start Blur Effect
+    document.body.style.transition = "filter 0.5s";
     document.body.style.filter = "blur(2px)";
 
-    // Remove Blur After Warp Starts
     setTimeout(() => {
       document.body.style.filter = "blur(0px)";
     }, 500);
   }
 });
 
-animate();
-
-
-  // ✅ The Main Animation Loop (Runs Continuously)
+// ✅ The Animation Loop (Snippet #11)
 function animate() {
-  requestAnimationFrame(animate); // Keep looping
+  requestAnimationFrame(animate);
 
-  // Snippet #11 - Ensure Scene Renders
   if (!renderer) {
     console.error("Renderer is not defined!");
     return;
   }
 
-  // ✅ Warp Speed Motion (Moves Camera Forward)
+  // ✅ Warp Speed Motion
   if (isWarping) {
-    warpSpeed += acceleration; // Increase speed gradually
-    if (warpSpeed > maxWarpSpeed) warpSpeed = maxWarpSpeed; // Limit max speed
-    camera.position.z -= warpSpeed; // Move forward
+    warpSpeed += acceleration; 
+    if (warpSpeed > maxWarpSpeed) warpSpeed = maxWarpSpeed;
+    camera.position.z -= warpSpeed;
   }
 
-  // ✅ Ensure Stars Move Properly
+  // ✅ Move Stars for Warp Effect
   if (starField) {
-    starField.position.z += warpSpeed * 1.5; // Move stars faster for warp effect
+    starField.position.z += warpSpeed * 1.5;
     if (starField.position.z > 50) {
-      starField.position.z = -1000; // Reset stars when out of view
+      starField.position.z = -1000;
     }
   }
 
-  // ✅ Ensure Renderer Exists Before Trying to Render
-  if (scene && camera) {
-    renderer.render(scene, camera);
-  }
-}
+  // ✅ Move Camera with Arrow Controls
+  if (moveLeft) camera.position.x -= speed;
+  if (moveRight) camera.position.x += speed;
+  if (moveUp) camera.position.y += speed;
+  if (moveDown) camera.position.y -= speed;
 
-// ✅ Start the Animation Loop
-animate();
-
-
-// Snippet #4 - Apply Movement to Camera
-const speed = 2;
-
-if (moveLeft) camera.position.x -= speed;
-if (moveRight) camera.position.x += speed;
-if (moveUp) camera.position.y += speed;
-if (moveDown) camera.position.y -= speed;
-
-  // Snippet #10 - Screen Shake Effect
-if (warpSpeed > 10) {
-  camera.rotation.x = (Math.random() - 0.5) * 0.02; // Slight shake
-  camera.rotation.y = (Math.random() - 0.5) * 0.02;
-} else {
-  camera.rotation.x = 0; // Reset shake when not at high speed
-  camera.rotation.y = 0;
-}
-
-
-  // 🌠 Move Stars
-  starField.position.z += warpSpeed;
-  if (starField.position.z > 50) {
-    starField.position.z = -500;
+  // ✅ Screen Shake Effect (Snippet #10)
+  if (warpSpeed > 10) {
+    camera.rotation.x = (Math.random() - 0.5) * 0.02;
+    camera.rotation.y = (Math.random() - 0.5) * 0.02;
+  } else {
+    camera.rotation.x = 0;
+    camera.rotation.y = 0;
   }
 
-  // Snippet #5 - Create Multiple Nebulas 🌫️
-const nebulas = [];
-for (let i = 0; i < 3; i++) {
-  const nebulaGeometry = new THREE.SphereGeometry(80, 32, 32);
-  const nebulaMaterial = new THREE.MeshStandardMaterial({
-    color: 0x442266,
-    transparent: true,
-    opacity: 0.3,
-  });
-
-  const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
-  nebula.position.set(
-    (Math.random() - 0.5) * 1000,
-    (Math.random() - 0.5) * 1000,
-    (Math.random() - 0.5) * 1000
-  );
-
-  scene.add(nebula);
-  nebulas.push(nebula);
-}
-
-// Snippet #6 - Create Galaxies 🌌
-const galaxies = [];
-for (let i = 0; i < 5; i++) {
-  const galaxyGeometry = new THREE.SphereGeometry(150, 32, 32);
-  const galaxyMaterial = new THREE.MeshBasicMaterial({ 
-    color: 0x111166,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.2
-  });
-
-  const galaxy = new THREE.Mesh(galaxyGeometry, galaxyMaterial);
-  galaxy.position.set(
-    (Math.random() - 0.5) * 2000,
-    (Math.random() - 0.5) * 2000,
-    (Math.random() - 0.5) * 2000
-  );
-
-  scene.add(galaxy);
-  galaxies.push(galaxy);
-}
-// Snippet #8 - Apply Warp Speed to Camera
-if (isWarping) {
-  warpSpeed += acceleration; // Gradually increase speed
-  if (warpSpeed > maxWarpSpeed) warpSpeed = maxWarpSpeed; // Cap at max speed
-  camera.position.z -= warpSpeed;
-
-  // Stretch the stars slightly to simulate motion blur
-  starField.scale.y = 1 + warpSpeed / 20;
-}
-
-
-  // 🪨 Move Asteroids
+  // ✅ Move Asteroids
   asteroids.forEach((asteroid) => {
     asteroid.position.z += warpSpeed * 2;
     asteroid.rotation.y += 0.005;
@@ -233,7 +142,7 @@ if (isWarping) {
     }
   });
 
-  // 🌫️ Move Nebula Slowly
+  // ✅ Move Nebula Slowly
   nebula.rotation.y += 0.001;
   nebula.position.z += warpSpeed * 0.5;
   if (nebula.position.z > -50) {
@@ -243,6 +152,8 @@ if (isWarping) {
   renderer.render(scene, camera);
 }
 
+// ✅ Start the Animation Loop (Now correctly placed)
+animate();
 
 // ✅ Handle Resizing
 window.addEventListener("resize", () => {
