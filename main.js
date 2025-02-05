@@ -90,6 +90,41 @@ window.addEventListener("click", () => {
 function animate() {
   requestAnimationFrame(animate);
 
+  // ✅ The Main Animation Loop (Runs Continuously)
+function animate() {
+  requestAnimationFrame(animate); // Keep looping
+
+  // Snippet #11 - Ensure Scene Renders
+  if (!renderer) {
+    console.error("Renderer is not defined!");
+    return;
+  }
+
+  // ✅ Warp Speed Motion (Moves Camera Forward)
+  if (isWarping) {
+    warpSpeed += acceleration; // Increase speed gradually
+    if (warpSpeed > maxWarpSpeed) warpSpeed = maxWarpSpeed; // Limit max speed
+    camera.position.z -= warpSpeed; // Move forward
+  }
+
+  // ✅ Ensure Stars Move Properly
+  if (starField) {
+    starField.position.z += warpSpeed * 1.5; // Move stars faster for warp effect
+    if (starField.position.z > 50) {
+      starField.position.z = -1000; // Reset stars when out of view
+    }
+  }
+
+  // ✅ Ensure Renderer Exists Before Trying to Render
+  if (scene && camera) {
+    renderer.render(scene, camera);
+  }
+}
+
+// ✅ Start the Animation Loop
+animate();
+
+
 // Snippet #4 - Apply Movement to Camera
 const speed = 2;
 
@@ -187,25 +222,14 @@ if (isWarping) {
 
   renderer.render(scene, camera);
 }
-animate();
 
-// ✅ Handle Resizing
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-
-// Snippet #7 - Warp Speed & Effects (Fixed Version)
-if (typeof isWarping === "undefined") { 
-  var isWarping = false; 
-}
-
+// Snippet #7 - Warp Speed & Effects (Final Fix)
+let isWarping = false;  // ✅ Declare only once
 let warpSpeed = 0;
 const maxWarpSpeed = 50;
 const acceleration = 0.5;
 
-// ✅ Click to Start Warp - Ensures `isWarping` is Not Redeclared
+// ✅ Click to Start Warp - No duplicate declarations
 window.addEventListener("click", () => {
   if (!isWarping) {
     isWarping = true;
@@ -218,4 +242,13 @@ window.addEventListener("click", () => {
       document.body.style.filter = "blur(0px)";
     }, 500);
   }
+});
+
+animate();
+
+// ✅ Handle Resizing
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 });
