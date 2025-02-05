@@ -90,17 +90,82 @@ window.addEventListener("click", () => {
 function animate() {
   requestAnimationFrame(animate);
 
-  // 🚀 Warp Effect - Move Camera Forward
-  if (isWarping) {
-    camera.position.z -= warpSpeed;
-    warpSpeed += 0.02; // Acceleration effect
-  }
+// Snippet #4 - Apply Movement to Camera
+const speed = 2;
+
+if (moveLeft) camera.position.x -= speed;
+if (moveRight) camera.position.x += speed;
+if (moveUp) camera.position.y += speed;
+if (moveDown) camera.position.y -= speed;
+
+  // Snippet #10 - Screen Shake Effect
+if (warpSpeed > 10) {
+  camera.rotation.x = (Math.random() - 0.5) * 0.02; // Slight shake
+  camera.rotation.y = (Math.random() - 0.5) * 0.02;
+} else {
+  camera.rotation.x = 0; // Reset shake when not at high speed
+  camera.rotation.y = 0;
+}
+
 
   // 🌠 Move Stars
   starField.position.z += warpSpeed;
   if (starField.position.z > 50) {
     starField.position.z = -500;
   }
+
+  // Snippet #5 - Create Multiple Nebulas 🌫️
+const nebulas = [];
+for (let i = 0; i < 3; i++) {
+  const nebulaGeometry = new THREE.SphereGeometry(80, 32, 32);
+  const nebulaMaterial = new THREE.MeshStandardMaterial({
+    color: 0x442266,
+    transparent: true,
+    opacity: 0.3,
+  });
+
+  const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
+  nebula.position.set(
+    (Math.random() - 0.5) * 1000,
+    (Math.random() - 0.5) * 1000,
+    (Math.random() - 0.5) * 1000
+  );
+
+  scene.add(nebula);
+  nebulas.push(nebula);
+}
+
+// Snippet #6 - Create Galaxies 🌌
+const galaxies = [];
+for (let i = 0; i < 5; i++) {
+  const galaxyGeometry = new THREE.SphereGeometry(150, 32, 32);
+  const galaxyMaterial = new THREE.MeshBasicMaterial({ 
+    color: 0x111166,
+    wireframe: true,
+    transparent: true,
+    opacity: 0.2
+  });
+
+  const galaxy = new THREE.Mesh(galaxyGeometry, galaxyMaterial);
+  galaxy.position.set(
+    (Math.random() - 0.5) * 2000,
+    (Math.random() - 0.5) * 2000,
+    (Math.random() - 0.5) * 2000
+  );
+
+  scene.add(galaxy);
+  galaxies.push(galaxy);
+}
+// Snippet #8 - Apply Warp Speed to Camera
+if (isWarping) {
+  warpSpeed += acceleration; // Gradually increase speed
+  if (warpSpeed > maxWarpSpeed) warpSpeed = maxWarpSpeed; // Cap at max speed
+  camera.position.z -= warpSpeed;
+
+  // Stretch the stars slightly to simulate motion blur
+  starField.scale.y = 1 + warpSpeed / 20;
+}
+
 
   // 🪨 Move Asteroids
   asteroids.forEach((asteroid) => {
@@ -129,4 +194,25 @@ window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Snippet #7 - Warp Speed & Effects
+let isWarping = false;
+let warpSpeed = 0;
+const maxWarpSpeed = 50;
+const acceleration = 0.5;
+
+// Event Listener for Clicking to Warp Forward
+window.addEventListener("click", () => {
+  if (!isWarping) {
+    isWarping = true;
+    warpSpeed = 5; // Start with an initial speed
+    document.body.style.transition = "filter 0.5s"; // Blur effect start
+    document.body.style.filter = "blur(2px)"; // Increase blur slightly
+
+    // Remove blur after warp starts
+    setTimeout(() => {
+      document.body.style.filter = "blur(0px)";
+    }, 500);
+  }
 });
