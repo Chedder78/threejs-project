@@ -196,21 +196,24 @@ window.addEventListener("resize", () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// Snippet #7 - Warp Speed & Effects
-let isWarping = false;
+// Snippet #7 - Warp Speed & Effects (Fixed Version)
+if (typeof isWarping === "undefined") { 
+  var isWarping = false; 
+}
+
 let warpSpeed = 0;
 const maxWarpSpeed = 50;
 const acceleration = 0.5;
 
-// Event Listener for Clicking to Warp Forward
+// ✅ Click to Start Warp - Ensures `isWarping` is Not Redeclared
 window.addEventListener("click", () => {
   if (!isWarping) {
     isWarping = true;
-    warpSpeed = 5; // Start with an initial speed
-    document.body.style.transition = "filter 0.5s"; // Blur effect start
-    document.body.style.filter = "blur(2px)"; // Increase blur slightly
+    warpSpeed = 5; // Initial Speed
+    document.body.style.transition = "filter 0.5s"; // Start Blur Effect
+    document.body.style.filter = "blur(2px)";
 
-    // Remove blur after warp starts
+    // Remove Blur After Warp Starts
     setTimeout(() => {
       document.body.style.filter = "blur(0px)";
     }, 500);
