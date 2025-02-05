@@ -7,6 +7,25 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// Snippet #3 - Arrow Button Controls
+let moveLeft = false;
+let moveRight = false;
+let moveUp = false;
+let moveDown = false;
+
+// ✅ Event Listeners for Movement
+document.getElementById("left").addEventListener("mousedown", () => moveLeft = true);
+document.getElementById("right").addEventListener("mousedown", () => moveRight = true);
+document.getElementById("up").addEventListener("mousedown", () => moveUp = true);
+document.getElementById("down").addEventListener("mousedown", () => moveDown = true);
+
+document.addEventListener("mouseup", () => {
+  moveLeft = false;
+  moveRight = false;
+  moveUp = false;
+  moveDown = false;
+});
+
 // ✅ Add Lighting
 const light = new THREE.PointLight(0xffffff, 1.5, 100);
 light.position.set(10, 10, 10);
