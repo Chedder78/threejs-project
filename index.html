@@ -1,34 +1,19 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Three.js Space Scene - Stars, Nebula, Asteroids & Warp Effect">
   <title>Three.js Space Scene 🚀</title>
   <style>
-    body { 
-      margin: 0; 
-      overflow: hidden; /* Prevent scrollbars */
-    }
-    canvas { 
-      display: block; 
-      width: 100%; 
-      height: 100%; 
-    }
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; width: 100%; height: 100%; }
   </style>
 </head>
 <body>
-  <!-- Optional: Add UI elements for controls -->
-<div id="controls" style="position: absolute; top: 10px; left: 10px; color: white; font-family: Arial, sans-serif;">
-  <p>Use Arrow Keys or Click to Warp!</p>
-  <!-- Add buttons -->
-  <button id="left">←</button>
-  <button id="right">→</button>
-  <button id="up">↑</button>
-  <button id="down">↓</button>
-</div>
-  <!-- Load Three.js from a CDN -->
+  <div id="controls" style="position: absolute; top: 10px; left: 10px; color: white; font-family: Arial, sans-serif;">
+    <p>Use Arrow Keys or Click to Warp!</p>
+  </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r146/three.min.js"></script>
-  <!-- Your main script -->
   <script src="main.js"></script>
 </body>
 </html>
