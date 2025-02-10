@@ -7,6 +7,9 @@ const renderer = new THREE.WebGLRenderer({ antialias: true }); // Enable antiali
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// Set camera position
+camera.position.z = 50; // Move the camera back to see the scene
+
 // ✅ Movement Controls (Snippet #3)
 let moveLeft = false;
 let moveRight = false;
@@ -14,17 +17,39 @@ let moveUp = false;
 let moveDown = false;
 const speed = 2; // Movement Speed
 
-// ✅ Event Listeners for Arrow Buttons
-document.getElementById("left")?.addEventListener("mousedown", () => moveLeft = true);
-document.getElementById("right")?.addEventListener("mousedown", () => moveRight = true);
-document.getElementById("up")?.addEventListener("mousedown", () => moveUp = true);
-document.getElementById("down")?.addEventListener("mousedown", () => moveDown = true);
+// ✅ Event Listeners for Arrow Keys
+document.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "ArrowLeft":
+      moveLeft = true;
+      break;
+    case "ArrowRight":
+      moveRight = true;
+      break;
+    case "ArrowUp":
+      moveUp = true;
+      break;
+    case "ArrowDown":
+      moveDown = true;
+      break;
+  }
+});
 
-document.addEventListener("mouseup", () => {
-  moveLeft = false;
-  moveRight = false;
-  moveUp = false;
-  moveDown = false;
+document.addEventListener("keyup", (event) => {
+  switch (event.key) {
+    case "ArrowLeft":
+      moveLeft = false;
+      break;
+    case "ArrowRight":
+      moveRight = false;
+      break;
+    case "ArrowUp":
+      moveUp = false;
+      break;
+    case "ArrowDown":
+      moveDown = false;
+      break;
+  }
 });
 
 // ✅ Lighting
@@ -37,7 +62,7 @@ const starGeometry = new THREE.BufferGeometry();
 const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2 });
 
 const starPositions = [];
-for (let i = 0; i < 500; i++) { 
+for (let i = 0; i < 500; i++) {
   starPositions.push((Math.random() - 0.5) * 1000);
   starPositions.push((Math.random() - 0.5) * 1000);
   starPositions.push((Math.random() - 0.5) * 1000);
@@ -96,16 +121,18 @@ window.addEventListener("click", () => {
 function animate() {
   requestAnimationFrame(animate);
 
-  if (!renderer) {
-    console.error("Renderer is not defined!");
-    return;
-  }
-
   // ✅ Warp Speed Motion
   if (isWarping) {
-    warpSpeed += acceleration; 
+    warpSpeed += acceleration;
     if (warpSpeed > maxWarpSpeed) warpSpeed = maxWarpSpeed;
     camera.position.z -= warpSpeed;
+
+    // Reset warp effect when camera goes too far
+    if (camera.position.z < -1000) {
+      isWarping = false;
+      warpSpeed = 0;
+      camera.position.z = 50; // Reset camera position
+    }
   }
 
   // ✅ Move Stars for Warp Effect
@@ -152,7 +179,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// ✅ Start the Animation Loop (Now correctly placed)
+// ✅ Start the Animation Loop
 animate();
 
 // ✅ Handle Resizing
