@@ -157,7 +157,7 @@ function animate() {
   if (nebula.position.z > -50) {
     nebula.position.z = -200;
   }
-
+camera.position.z = 50;
   renderer.render(scene, camera);
 }
 
