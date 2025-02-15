@@ -162,12 +162,4 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// Start the Animation Loop
 animate();
-
-// Handle Resizing
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
