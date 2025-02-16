@@ -1,12 +1,12 @@
-/* Snippet #2 - Space Flight Styles */
-
 /* Reset Default Margins */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 /* Background */
 body { 
   overflow: hidden;
-  background: black; 
+  background: url('path/to/your/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  perspective: 1000px;
 }
 
 /* On-Screen Controls */
@@ -36,20 +36,10 @@ body {
 .control-btn:hover {
   background: rgba(255, 255, 255, 0.4);
 }
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background: url('Default_Birth_of_a_supernova_nebulas_space_anomalies_masterpie_1_19c18988-4084-4018-a8b0-99ece862e385_0.jpg') no-repeat center center fixed;
-    background-size: cover;
-    perspective: 1000px;
-  }
 
-  #tilt-container {
-    width: 100%;
-    height: 100vh;
-    transform-style: preserve-3d;
-    transition: transform 0.1s;
-  }
-</style>
+#tilt-container {
+  width: 100%;
+  height: 100vh;
+  transform-style: preserve-3d;
+  transition: transform 0.1s;
+}
