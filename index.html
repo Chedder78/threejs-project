@@ -4,10 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Space Adventure</title>
-  <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
-  </style>
 </head>
 <body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -41,8 +37,8 @@
 
       function initializeScene() {
         const tiltContainer = document.createElement('div');
-        tiltContainer.id = 'tilt-container';
-        document.body.appendChild(tiltContainer);
+        tiltContainer.id = 'body';
+        document.body.appendChild(body);
 
         // Setup Three.js Scene
         const scene = new THREE.Scene();
