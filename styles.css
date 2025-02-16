@@ -7,11 +7,6 @@ body {
   background: url('Default_Birth_of_a_supernova_nebulas_space_anomalies_masterpie_1_19c18988-4084-4018-a8b0-99ece862e385_0.jpg') no-repeat center center fixed;
   background-size: cover;
   perspective: 1000px;
-}
-
-#tilt-container {
-  width: 100%;
-  height: 100vh;
   transform-style: preserve-3d;
   transition: transform 0.1s;
 }
@@ -29,7 +24,7 @@ body {
 .control-btn {
   width: 50px;
   height: 50px;
-  background: rgba(255, 255, 255, 0.2);
+  background: red;
   border: 2px solid white;
   color: white;
   font-size: 24px;
@@ -41,5 +36,5 @@ body {
 }
 
 .control-btn:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: green;
 }
