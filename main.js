@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
   // Setup Three.js Scene
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(00000000); // Change background to black or transparent
+  scene.background = null; // Remove background color// 
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
