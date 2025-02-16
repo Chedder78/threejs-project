@@ -6,11 +6,22 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
   // Setup Three.js Scene
   const scene = new THREE.Scene();
-  scene.background = null; // Remove background color// 
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   tiltContainer.appendChild(renderer.domElement);
+
+  const loader = new THREE.TextureLoader();
+loader.load(
+  'Default_Birth_of_a_supernova_nebulas_space_anomalies_masterpie_1_19c18988-4084-4018-a8b0-99ece862e385_0.jpg',
+  function(texture) {
+    scene.background = texture;
+  },
+  undefined,
+  function(err) {
+    console.error('An error happened while loading the texture.');
+  }
+);
 
   // Set camera position
   camera.position.z = 50;
