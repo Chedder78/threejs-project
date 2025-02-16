@@ -115,20 +115,22 @@ loader.load(
   nebula.position.set(0, 0, -200);
   scene.add(nebula);
 
-  // Create Floating Asteroids
-  const asteroids = [];
-  for (let i = 0; i < 15; i++) {
-    const geometry = new THREE.SphereGeometry(Math.random() * 2, 32, 32);
-    const material = new THREE.MeshStandardMaterial({ color: 0x888888 });
-    const asteroid = new THREE.Mesh(geometry, material);
-    asteroid.position.set(
-      (Math.random() - 0.5) * 300,
-      (Math.random() - 0.5) * 300,
-      (Math.random() - 0.5) * 300
-    );
-    scene.add(asteroid);
-    asteroids.push(asteroid);
-  }
+// Create Floating Alien Planets
+const alienColors = [0x8A2BE2, 0x7FFF00, 0xFF4500, 0x00CED1, 0xFFD700, 0xADFF2F, 0xFF69B4, 0xCD5C5C];
+const asteroids = [];
+for (let i = 0; i < 15; i++) {
+  const geometry = new THREE.SphereGeometry(Math.random() * 2, 32, 32);
+  const color = alienColors[Math.floor(Math.random() * alienColors.length)];
+  const material = new THREE.MeshStandardMaterial({ color: color });
+  const asteroid = new THREE.Mesh(geometry, material);
+  asteroid.position.set(
+    (Math.random() - 0.5) * 300,
+    (Math.random() - 0.5) * 300,
+    (Math.random() - 0.5) * 300
+  );
+  scene.add(asteroid);
+  asteroids.push(asteroid);
+}
 
   // Warp Speed Variables
   let isWarping = false;
