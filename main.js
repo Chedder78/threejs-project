@@ -40,19 +40,52 @@ const light = new THREE.PointLight(0xffffff, 1.5, 100);
 light.position.set(10, 10, 10);
 scene.add(light);
 
-// Create Stars
+// Create Stars with different sizes, colors, and flickering effect
 const starGeometry = new THREE.BufferGeometry();
-const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2 });
+const starMaterialArray = [];
 
 const starPositions = [];
+const starSizes = [];
+const starColors = [];
+
 for (let i = 0; i < 500; i++) {
+  // Random positions
   starPositions.push((Math.random() - 0.5) * 1000);
   starPositions.push((Math.random() - 0.5) * 1000);
   starPositions.push((Math.random() - 0.5) * 1000);
+
+  // Random sizes
+  starSizes.push(Math.random() * 0.5 + 0.1);
+
+  // Random colors (faint blue and faint red)
+  const color = new THREE.Color();
+  if (Math.random() > 0.5) {
+    color.setRGB(0.5, 0.5, 1); // Faint blue
+  } else {
+    color.setRGB(1, 0.5, 0.5); // Faint red
+  }
+  starColors.push(color.r, color.g, color.b);
 }
+
 starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+starGeometry.setAttribute('size', new THREE.Float32BufferAttribute(starSizes, 1));
+starGeometry.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
+
+const starMaterial = new THREE.PointsMaterial({ vertexColors: true, sizeAttenuation: true });
 const starField = new THREE.Points(starGeometry, starMaterial);
 scene.add(starField);
+
+// Flickering effect
+function flickerStars() {
+  const sizes = starGeometry.attributes.size.array;
+  for (let i = 0; i < sizes.length; i++) {
+    sizes[i] = Math.random() * 0.5 + 0.1;
+  }
+  starGeometry.attributes.size.needsUpdate = true;
+}
+
+// Set interval for flickering
+setInterval(flickerStars, 100);
 
 // Create Nebula
 const nebulaGeometry = new THREE.SphereGeometry(60, 32, 32);
@@ -160,6 +193,31 @@ function animate() {
   }
 
   renderer.render(scene, camera);
+
+  // Ensure the DOM is fully loaded before running the script
+document.addEventListener('DOMContentLoaded', (event) => {
+  const tiltContainer = document.createElement('div');
+  tiltContainer.id = 'tilt-container';
+  document.body.appendChild(tiltContainer);
+
+  const scene = new THREE.Scene();
+  // Move your existing Three.js scene setup code inside the tiltContainer
+  tiltContainer.appendChild(renderer.domElement);
+
+  // 3D Tilt Effect
+  document.addEventListener('mousemove', (event) => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+    const rotateX = (centerY - mouseY) / centerY * 15; // Adjust for desired tilt
+    const rotateY = (mouseX - centerX) / centerX * 15; // Adjust for desired tilt
+
+    tiltContainer.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+});
 }
 
 animate();
