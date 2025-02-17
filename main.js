@@ -331,4 +331,3 @@ animate();
     });
   }
 });
-animate();
