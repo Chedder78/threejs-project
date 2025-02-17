@@ -36,13 +36,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // Set camera position
     camera.position.z = 50;
 
-    // Animation Loop
-    function animate() {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-    }
-  }
-});
     // Movement Controls
     let moveLeft = false;
     let moveRight = false;
@@ -273,7 +266,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
       composer.render();
     }
-animate();
+    animate();
 
     // 3D Tilt Effect
     document.addEventListener('mousemove', (event) => {
