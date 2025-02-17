@@ -36,6 +36,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // Set camera position
     camera.position.z = 50;
 
+    // Animation Loop
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+  }
+});
     // Movement Controls
     let moveLeft = false;
     let moveRight = false;
