@@ -266,6 +266,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
       composer.render();
     }
+
     animate();
 
     // 3D Tilt Effect
