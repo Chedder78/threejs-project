@@ -1,10 +1,10 @@
 // Ensure you have the correct path for LuminosityHighPassShader.js
-import * as THREE from 'file:///C:/Users/calid/Downloads/three.js-master/three.js-master/build/three.module.js';
-import { EffectComposer } from 'file:///C:/Users/calid/Downloads/three.js-master/three.js-master/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'file:///C:/Users/calid/Downloads/three.js-master/three.js-master/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'file:///C:/Users/calid/Downloads/three.js-master/three.js-master/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { LuminosityHighPassShader } from 'file:///C:/Users/calid/Downloads/three.js-master/three.js-master/examples/jsm/shaders/LuminosityHighPassShader.js';
-
+import * as THREE from './libs/build/three.module.js';
+import { EffectComposer } from './libs/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from './libs/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from './libs/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { LuminosityHighPassShader } from './libs/examples/jsm/shaders/LuminosityHighPassShader.js';
+import { OrbitControls } from './libs/examples/jsm/controls/OrbitControls.js';
 
 document.addEventListener('DOMContentLoaded', (event) => {
   // Add Start Screen
