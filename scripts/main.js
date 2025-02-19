@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // Load Background Texture
     const loader = new THREE.TextureLoader();
     loader.load(
-      '/assets/background.jpg',
+      'assets',
       function (texture) {
         scene.background = texture;
         document.body.removeChild(loadingScreen);
