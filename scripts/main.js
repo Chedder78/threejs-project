@@ -1,3 +1,7 @@
+// Ensure you have the correct path for LuminosityHighPassShader.js
+import { LuminosityHighPassShader } from 'three/examples/jsm/shaders/LuminosityHighPassShader.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
 document.addEventListener('DOMContentLoaded', (event) => {
   // Add Start Screen
   const startScreen = document.createElement('div');
@@ -52,7 +56,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // Load Background Texture
     const loader = new THREE.TextureLoader();
     loader.load(
-      'assets/background.jpg',
+      '/assets/background.jpg',
       function (texture) {
         scene.background = texture;
         document.body.removeChild(loadingScreen);
@@ -187,14 +191,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     });
 
-    // Add Sound Effects
-    const warpSound = new Audio('assets/warp-sound.mp3');
-    warpSound.loop = true;
-
-    const backgroundMusic = new Audio('assets/space-music.mp3');
-    backgroundMusic.loop = true;
-    backgroundMusic.volume = 0.5;
-    backgroundMusic.play();
 
     // Add Particle System
     const particleGeometry = new THREE.BufferGeometry();
@@ -214,7 +210,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     scene.add(particleSystem);
 
     // Add Bloom Effect
-    const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
     bloomPass.threshold = 0.1;
     bloomPass.strength = 1.5;
     bloomPass.radius = 0.5;
