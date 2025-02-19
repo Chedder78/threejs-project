@@ -33,6 +33,35 @@ document.addEventListener('DOMContentLoaded', (event) => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     tiltContainer.appendChild(renderer.domElement);
 
+    // Add Loading Screen
+    const loadingScreen = document.createElement('div');
+    loadingScreen.style.position = 'absolute';
+    loadingScreen.style.top = '0';
+    loadingScreen.style.left = '0';
+    loadingScreen.style.width = '100%';
+    loadingScreen.style.height = '100%';
+    loadingScreen.style.backgroundColor = 'black';
+    loadingScreen.style.color = 'white';
+    loadingScreen.style.display = 'flex';
+    loadingScreen.style.justifyContent = 'center';
+    loadingScreen.style.alignItems = 'center';
+    loadingScreen.innerHTML = 'Loading...';
+    document.body.appendChild(loadingScreen);
+
+    // Load Background Texture
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      'assets/background.jpg',
+      function (texture) {
+        scene.background = texture;
+        document.body.removeChild(loadingScreen);
+      },
+      undefined,
+      function (err) {
+        console.error('An error happened while loading the texture.');
+      }
+    );
+
     // Set camera position
     camera.position.z = 50;
 
@@ -67,22 +96,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
     light.position.set(10, 10, 10);
     scene.add(light);
 
-    // Create Stars with different sizes, colors, and flickering effect
+    // Create Stars
     const starGeometry = new THREE.BufferGeometry();
     const starPositions = [];
     const starSizes = [];
     const starColors = [];
 
     for (let i = 0; i < 500; i++) {
-      // Random positions
       starPositions.push((Math.random() - 0.5) * 1000);
       starPositions.push((Math.random() - 0.5) * 1000);
       starPositions.push((Math.random() - 0.5) * 1000);
 
-      // Random sizes
       starSizes.push(Math.random() * 0.5 + 0.1);
 
-      // Random colors (faint blue and faint red)
       const color = new THREE.Color();
       if (Math.random() > 0.5) {
         color.setRGB(0.5, 0.5, 1); // Faint blue
@@ -109,7 +135,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
       starGeometry.attributes.size.needsUpdate = true;
     }
 
-    // Set interval for flickering
     setInterval(flickerStars, 100);
 
     // Create Nebula
@@ -162,10 +187,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 
     // Add Sound Effects
-    const warpSound = new Audio('https://www.soundjay.com/button/beep-07.mp3');
+    const warpSound = new Audio('assets/warp-sound.mp3');
     warpSound.loop = true;
 
-    const backgroundMusic = new Audio('https://www.soundjay.com/button/beep-07.mp3');
+    const backgroundMusic = new Audio('assets/space-music.mp3');
     backgroundMusic.loop = true;
     backgroundMusic.volume = 0.5;
     backgroundMusic.play();
