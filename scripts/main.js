@@ -12,11 +12,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
   startScreen.style.justifyContent = 'center';
   startScreen.style.alignItems = 'center';
   startScreen.style.flexDirection = 'column';
-  startScreen.innerHTML = '<h1>Space Adventure</h1><p>Click to Start</p>';
+  startScreen.innerHTML = '<button id="start-button" style="padding: 10px 20px; font-size: 20px;">Start</button>';
   document.body.appendChild(startScreen);
 
-  // Remove Start Screen on Click
-  startScreen.addEventListener('click', () => {
+  // Remove Start Screen on Button Click
+  const startButton = document.getElementById('start-button');
+  startButton.addEventListener('click', () => {
     document.body.removeChild(startScreen);
     initializeScene();
   });
