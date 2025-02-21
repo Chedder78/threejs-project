@@ -119,7 +119,7 @@ class SpaceScene {
 
   loadBackgroundTexture() {
     this.textureLoader.load(
-      'https://raw.githubusercontent.com/your-username/your-repo/main/assets/background.jpg',
+      'background.png.jpg',
       (texture) => {
         this.scene.background = texture;
       },
