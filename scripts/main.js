@@ -7,6 +7,33 @@ import { LuminosityHighPassShader } from './libs/examples/jsm/shaders/Luminosity
 import { OrbitControls } from './libs/examples/jsm/controls/OrbitControls.js';
 
 document.addEventListener('DOMContentLoaded', (event) => {
+
+  
+  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.enablePan = false;
+controls.screenSpacePanning = false;
+
+  import { LoadingManager } from "three";
+
+const manager = new LoadingManager();
+manager.onStart = () => console.log("Loading started");
+manager.onLoad = () => console.log("All assets loaded");
+
+const textureLoader = new THREE.TextureLoader(manager);
+
+
+  import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+const loader = new GLTFLoader();
+loader.load("assets/models/model.glb", (gltf) => {
+    scene.add(gltf.scene);
+});
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit resolution scaling
+
   // Add Start Screen
   const startScreen = document.createElement('div');
   startScreen.style.position = 'absolute';
@@ -29,6 +56,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.body.removeChild(startScreen);
     initializeScene();
   });
+function resizeCanvas() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+}
+window.addEventListener("resize", resizeCanvas);
 
   function initializeScene() {
     const tiltContainer = document.createElement('div');
@@ -294,6 +327,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     animate();
+    function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+}
+animate();
+
 
     // 3D Tilt Effect
     document.addEventListener('mousemove', (event) => {
@@ -358,3 +398,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
   }
 });
+setTimeout(() => {
+    loadHDTextures();
+}, 3000);
+
+
+if (!WebGL.isWebGLAvailable()) {
+    alert("WebGL not supported on this device.");
+}
+
