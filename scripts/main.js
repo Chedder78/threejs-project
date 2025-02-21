@@ -2,75 +2,102 @@ import * as THREE from './libs/build/three.module.js';
 import { EffectComposer } from './libs/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './libs/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './libs/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { LuminosityHighPassShader } from './libs/examples/jsm/shaders/LuminosityHighPassShader.js';
 import { OrbitControls } from './libs/examples/jsm/controls/OrbitControls.js';
-import { LoadingManager } from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { GLTFLoader } from './libs/examples/jsm/loaders/GLTFLoader.js';
 
-// Initialize Three.js elements
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit resolution scaling
+class SpaceScene {
+  constructor() {
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.controls = null;
+    this.manager = new THREE.LoadingManager();
+    this.textureLoader = new THREE.TextureLoader(this.manager);
+    this.asteroids = [];
+    this.isWarping = false;
+    this.warpSpeed = 0;
+    this.maxWarpSpeed = 50;
+    this.acceleration = 0.5;
+    this.moveLeft = false;
+    this.moveRight = false;
+    this.moveUp = false;
+    this.moveDown = false;
+    this.speed = 2;
+    this.init();
+  }
 
-// Initialize OrbitControls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.enablePan = false;
-controls.screenSpacePanning = false;
+  init() {
+    this.setupRenderer();
+    this.setupCamera();
+    this.setupControls();
+    this.setupEventListeners();
+    this.setupLoadingManager();
+    this.createStartScreen();
+  }
 
-// Initialize LoadingManager
-const manager = new LoadingManager();
-manager.onStart = () => console.log("Loading started");
-manager.onLoad = () => console.log("All assets loaded");
+  setupRenderer() {
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.0;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    document.body.appendChild(this.renderer.domElement);
+  }
 
-// Initialize TextureLoader
-const textureLoader = new THREE.TextureLoader(manager);
+  setupCamera() {
+    this.camera.position.z = 50;
+  }
 
-// Handle Window Resize
-function resizeCanvas() {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-}
-window.addEventListener("resize", resizeCanvas);
+  setupControls() {
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true;
+    this.controls.enablePan = false;
+    this.controls.screenSpacePanning = false;
+  }
 
-document.addEventListener('DOMContentLoaded', (event) => {
-  // Add Start Screen
-  const startScreen = document.createElement('div');
-  startScreen.style.position = 'absolute';
-  startScreen.style.top = '0';
-  startScreen.style.left = '0';
-  startScreen.style.width = '100%';
-  startScreen.style.height = '100%';
-  startScreen.style.backgroundColor = 'black';
-  startScreen.style.color = 'white';
-  startScreen.style.display = 'flex';
-  startScreen.style.justifyContent = 'center';
-  startScreen.style.alignItems = 'center';
-  startScreen.style.flexDirection = 'column';
-  startScreen.innerHTML = '<button id="start-button" style="padding: 10px 20px; font-size: 20px;">Start</button>';
-  document.body.appendChild(startScreen);
+  setupLoadingManager() {
+    this.manager.onStart = () => console.log("Loading started");
+    this.manager.onLoad = () => console.log("All assets loaded");
+  }
 
-  // Remove Start Screen on Button Click
-  const startButton = document.getElementById('start-button');
-  startButton.addEventListener('click', () => {
-    document.body.removeChild(startScreen);
-    initializeScene();
-  });
+  createStartScreen() {
+    const startScreen = document.createElement('div');
+    startScreen.style.position = 'absolute';
+    startScreen.style.top = '0';
+    startScreen.style.left = '0';
+    startScreen.style.width = '100%';
+    startScreen.style.height = '100%';
+    startScreen.style.backgroundColor = 'black';
+    startScreen.style.color = 'white';
+    startScreen.style.display = 'flex';
+    startScreen.style.justifyContent = 'center';
+    startScreen.style.alignItems = 'center';
+    startScreen.style.flexDirection = 'column';
+    startScreen.innerHTML = '<button id="start-button" style="padding: 10px 20px; font-size: 20px;">Start</button>';
+    document.body.appendChild(startScreen);
 
-  function initializeScene() {
-    const tiltContainer = document.createElement('div');
-    tiltContainer.id = 'tilt-container';
-    document.body.appendChild(tiltContainer);
+    const startButton = document.getElementById('start-button');
+    startButton.addEventListener('click', () => {
+      document.body.removeChild(startScreen);
+      this.initializeScene();
+    });
+  }
 
-    tiltContainer.appendChild(renderer.domElement);
+  initializeScene() {
+    this.createLoadingScreen();
+    this.loadBackgroundTexture();
+    this.setupLighting();
+    this.createStarField();
+    this.createNebula();
+    this.createAsteroids();
+    this.setupBloomEffect();
+    this.setupAnimationLoop();
+    this.setupTiltEffect();
+    this.setupSettingsPanel();
+    this.setupRaycaster();
+  }
 
-    // Add Loading Screen
+  createLoadingScreen() {
     const loadingScreen = document.createElement('div');
     loadingScreen.style.position = 'absolute';
     loadingScreen.style.top = '0';
@@ -85,54 +112,31 @@ document.addEventListener('DOMContentLoaded', (event) => {
     loadingScreen.innerHTML = 'Loading...';
     document.body.appendChild(loadingScreen);
 
-    // Load Background Texture
-    textureLoader.load(
-      'assets',
-      function (texture) {
-        scene.background = texture;
-        document.body.removeChild(loadingScreen);
+    this.manager.onLoad = () => {
+      document.body.removeChild(loadingScreen);
+    };
+  }
+
+  loadBackgroundTexture() {
+    this.textureLoader.load(
+      'assets/background.jpg',
+      (texture) => {
+        this.scene.background = texture;
       },
       undefined,
-      function (err) {
+      (err) => {
         console.error('An error happened while loading the texture.');
       }
     );
+  }
 
-    // Set camera position
-    camera.position.z = 50;
-
-    // Movement Controls
-    let moveLeft = false;
-    let moveRight = false;
-    let moveUp = false;
-    let moveDown = false;
-    let speed = 2;
-
-    // Event Listeners for Arrow Keys
-    document.addEventListener("keydown", (event) => {
-      switch (event.key) {
-        case "ArrowLeft": moveLeft = true; break;
-        case "ArrowRight": moveRight = true; break;
-        case "ArrowUp": moveUp = true; break;
-        case "ArrowDown": moveDown = true; break;
-      }
-    });
-
-    document.addEventListener("keyup", (event) => {
-      switch (event.key) {
-        case "ArrowLeft": moveLeft = false; break;
-        case "ArrowRight": moveRight = false; break;
-        case "ArrowUp": moveUp = false; break;
-        case "ArrowDown": moveDown = false; break;
-      }
-    });
-
-    // Lighting
+  setupLighting() {
     const light = new THREE.PointLight(0xffffff, 1.5, 100);
     light.position.set(10, 10, 10);
-    scene.add(light);
+    this.scene.add(light);
+  }
 
-    // Create Stars
+  createStarField() {
     const starGeometry = new THREE.BufferGeometry();
     const starPositions = [];
     const starSizes = [];
@@ -160,20 +164,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     const starMaterial = new THREE.PointsMaterial({ vertexColors: true, sizeAttenuation: true });
     const starField = new THREE.Points(starGeometry, starMaterial);
-    scene.add(starField);
+    this.scene.add(starField);
 
-    // Flickering effect
-    function flickerStars() {
-      const sizes = starGeometry.attributes.size.array;
-      for (let i = 0; i < sizes.length; i++) {
-        sizes[i] = Math.random() * 0.5 + 0.1;
-      }
-      starGeometry.attributes.size.needsUpdate = true;
+    setInterval(() => this.flickerStars(starGeometry), 100);
+  }
+
+  flickerStars(starGeometry) {
+    const sizes = starGeometry.attributes.size.array;
+    for (let i = 0; i < sizes.length; i++) {
+      sizes[i] = Math.random() * 0.5 + 0.1;
     }
+    starGeometry.attributes.size.needsUpdate = true;
+  }
 
-    setInterval(flickerStars, 100);
-
-    // Create Nebula
+  createNebula() {
     const nebulaGeometry = new THREE.SphereGeometry(60, 32, 32);
     const nebulaMaterial = new THREE.MeshStandardMaterial({
       color: 0x443355,
@@ -182,11 +186,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
     const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
     nebula.position.set(0, 0, -200);
-    scene.add(nebula);
+    this.scene.add(nebula);
+  }
 
-    // Create Floating Alien Planets
+  createAsteroids() {
     const alienColors = [0x8A2BE2, 0x7FFF00, 0xFF4500, 0x00CED1, 0xFFD700, 0xADFF2F, 0xFF69B4, 0xCD5C5C];
-    const asteroids = [];
     for (let i = 0; i < 15; i++) {
       const geometry = new THREE.SphereGeometry(Math.random() * 2, 32, 32);
       const color = alienColors[Math.floor(Math.random() * alienColors.length)];
@@ -197,131 +201,59 @@ document.addEventListener('DOMContentLoaded', (event) => {
         (Math.random() - 0.5) * 300,
         (Math.random() - 0.5) * 300
       );
-      scene.add(asteroid);
-      asteroids.push(asteroid);
+      this.scene.add(asteroid);
+      this.asteroids.push(asteroid);
     }
+  }
 
-    // Warp Speed Variables
-    let isWarping = false;
-    let warpSpeed = 0;
-    const maxWarpSpeed = 50;
-    const acceleration = 0.5;
-
-    // Click to Warp Forward
-    window.addEventListener("click", () => {
-      if (!isWarping) {
-        isWarping = true;
-        warpSpeed = 5;
-        document.body.style.transition = "filter 0.5s";
-        document.body.style.filter = "blur(2px)";
-        warpSound.play();
-
-        setTimeout(() => {
-          document.body.style.filter = "blur(0px)";
-        }, 500);
-      }
-    });
-
-    // Add Particle System
-    const particleGeometry = new THREE.BufferGeometry();
-    const particleCount = 1000;
-    const particlePositions = new Float32Array(particleCount * 3);
-
-    for (let i = 0; i < particleCount; i++) {
-      particlePositions[i * 3] = (Math.random() - 0.5) * 2000;
-      particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
-      particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
-    }
-
-    particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-
-    const particleMaterial = new THREE.PointsMaterial({ color: 0xFFFFFF, size: 2 });
-    const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
-    scene.add(particleSystem);
-
-    // Add Bloom Effect
+  setupBloomEffect() {
     const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
     bloomPass.threshold = 0.1;
     bloomPass.strength = 1.5;
     bloomPass.radius = 0.5;
 
-    const composer = new THREE.EffectComposer(renderer);
-    composer.addPass(new THREE.RenderPass(scene, camera));
+    const composer = new EffectComposer(this.renderer);
+    composer.addPass(new RenderPass(this.scene, this.camera));
     composer.addPass(bloomPass);
 
-    // Animation Loop
-    function animate() {
+    this.composer = composer;
+  }
+
+  setupAnimationLoop() {
+    const animate = () => {
       requestAnimationFrame(animate);
 
-      // Warp Speed Motion
-      if (isWarping) {
-        warpSpeed += acceleration;
-        if (warpSpeed > maxWarpSpeed) warpSpeed = maxWarpSpeed;
-        camera.position.z -= warpSpeed;
+      if (this.isWarping) {
+        this.warpSpeed += this.acceleration;
+        if (this.warpSpeed > this.maxWarpSpeed) this.warpSpeed = this.maxWarpSpeed;
+        this.camera.position.z -= this.warpSpeed;
 
-        // Reset warp effect when camera goes too far
-        if (camera.position.z < -1000) {
-          isWarping = false;
-          warpSpeed = 0;
-          camera.position.z = 50;
+        if (this.camera.position.z < -1000) {
+          this.isWarping = false;
+          this.warpSpeed = 0;
+          this.camera.position.z = 50;
         }
       }
 
-      // Move Stars for Warp Effect
-      if (starField) {
-        starField.position.z += warpSpeed * 1.5;
-        if (starField.position.z > 50) {
-          starField.position.z = -1000;
-        }
-      }
+      if (this.moveLeft) this.camera.position.x -= this.speed;
+      if (this.moveRight) this.camera.position.x += this.speed;
+      if (this.moveUp) this.camera.position.y += this.speed;
+      if (this.moveDown) this.camera.position.y -= this.speed;
 
-      // Move Camera with Arrow Controls
-      if (moveLeft) camera.position.x -= speed;
-      if (moveRight) camera.position.x += speed;
-      if (moveUp) camera.position.y += speed;
-      if (moveDown) camera.position.y -= speed;
-
-      // Screen Shake Effect
-      if (warpSpeed > 10) {
-        camera.rotation.x = (Math.random() - 0.5) * 0.02;
-        camera.rotation.y = (Math.random() - 0.5) * 0.02;
-      } else {
-        camera.rotation.x = 0;
-        camera.rotation.y = 0;
-      }
-
-      // Move Asteroids
-      asteroids.forEach((asteroid) => {
-        asteroid.position.z += warpSpeed * 2;
-        asteroid.rotation.y += 0.005;
-        asteroid.rotation.x += 0.003;
-
-        if (asteroid.position.z > 50) {
-          asteroid.position.z = -300;
-        }
-      });
-
-      // Move Nebula Slowly
-      nebula.rotation.y += 0.001;
-      nebula.position.z += warpSpeed * 0.5;
-      if (nebula.position.z > -50) {
-        nebula.position.z = -200;
-      }
-
-      // Move Particle System
-      if (isWarping) {
-        particleSystem.position.z += warpSpeed * 2;
-        if (particleSystem.position.z > 1000) {
-          particleSystem.position.z = -1000;
-        }
-      }
-
-      composer.render();
-    }
+      this.controls.update();
+      this.composer.render();
+    };
 
     animate();
+  }
 
-    // 3D Tilt Effect
+  setupTiltEffect() {
+    const tiltContainer = document.createElement('div');
+    tiltContainer.id = 'tilt-container';
+    document.body.appendChild(tiltContainer);
+
+    tiltContainer.appendChild(this.renderer.domElement);
+
     document.addEventListener('mousemove', (event) => {
       const width = window.innerWidth;
       const height = window.innerHeight;
@@ -329,13 +261,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
       const centerY = height / 2;
       const mouseX = event.clientX;
       const mouseY = event.clientY;
-      const rotateX = (centerY - mouseY) / centerY * 15; // Adjust for desired tilt
-      const rotateY = (mouseX - centerX) / centerX * 15; // Adjust for desired tilt
+      const rotateX = (centerY - mouseY) / centerY * 15;
+      const rotateY = (mouseX - centerX) / centerX * 15;
 
       tiltContainer.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     });
+  }
 
-    // Add Settings Panel
+  setupSettingsPanel() {
     const settingsPanel = document.createElement('div');
     settingsPanel.style.position = 'absolute';
     settingsPanel.style.top = '10px';
@@ -350,13 +283,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
     speedSlider.type = 'range';
     speedSlider.min = '1';
     speedSlider.max = '10';
-    speedSlider.value = speed;
+    speedSlider.value = this.speed;
     speedSlider.oninput = (event) => {
-      speed = parseFloat(event.target.value);
+      this.speed = parseFloat(event.target.value);
     };
     settingsPanel.appendChild(speedSlider);
+  }
 
-    // Add Raycaster for Interactive Elements
+  setupRaycaster() {
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
@@ -364,9 +298,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-      raycaster.setFromCamera(mouse, camera);
+      raycaster.setFromCamera(mouse, this.camera);
 
-      const intersects = raycaster.intersectObjects(asteroids);
+      const intersects = raycaster.intersectObjects(this.asteroids);
 
       if (intersects.length > 0) {
         const clickedAsteroid = intersects[0].object;
@@ -374,12 +308,54 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     });
   }
-});
 
-setTimeout(() => {
-    loadHDTextures();
-}, 3000);
+  setupEventListeners() {
+    window.addEventListener('resize', () => this.resizeCanvas());
 
-if (!WebGL.isWebGLAvailable()) {
-    alert("WebGL not supported on this device.");
+    document.addEventListener('keydown', (event) => {
+      switch (event.key) {
+        case 'ArrowLeft': this.moveLeft = true; break;
+        case 'ArrowRight': this.moveRight = true; break;
+        case 'ArrowUp': this.moveUp = true; break;
+        case 'ArrowDown': this.moveDown = true; break;
+      }
+    });
+
+    document.addEventListener('keyup', (event) => {
+      switch (event.key) {
+        case 'ArrowLeft': this.moveLeft = false; break;
+        case 'ArrowRight': this.moveRight = false; break;
+        case 'ArrowUp': this.moveUp = false; break;
+        case 'ArrowDown': this.moveDown = false; break;
+      }
+    });
+
+    window.addEventListener('click', () => {
+      if (!this.isWarping) {
+        this.isWarping = true;
+        this.warpSpeed = 5;
+        document.body.style.transition = 'filter 0.5s';
+        document.body.style.filter = 'blur(2px)';
+
+        setTimeout(() => {
+          document.body.style.filter = 'blur(0px)';
+        }, 500);
+      }
+    });
+  }
+
+  resizeCanvas() {
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+  }
 }
+
+// Initialize the scene
+document.addEventListener('DOMContentLoaded', () => {
+  if (!THREE.WebGL.isWebGLAvailable()) {
+    alert('WebGL not supported on this device.');
+  } else {
+    new SpaceScene();
+  }
+});
