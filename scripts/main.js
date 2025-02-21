@@ -1,39 +1,45 @@
-// Ensure you have the correct path for LuminosityHighPassShader.js
 import * as THREE from './libs/build/three.module.js';
 import { EffectComposer } from './libs/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './libs/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './libs/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { LuminosityHighPassShader } from './libs/examples/jsm/shaders/LuminosityHighPassShader.js';
 import { OrbitControls } from './libs/examples/jsm/controls/OrbitControls.js';
+import { LoadingManager } from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-document.addEventListener('DOMContentLoaded', (event) => {
-
-  
-  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.enablePan = false;
-controls.screenSpacePanning = false;
-
-  import { LoadingManager } from "three";
-
-const manager = new LoadingManager();
-manager.onStart = () => console.log("Loading started");
-manager.onLoad = () => console.log("All assets loaded");
-
-const textureLoader = new THREE.TextureLoader(manager);
-
-
-  import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-const loader = new GLTFLoader();
-loader.load("assets/models/model.glb", (gltf) => {
-    scene.add(gltf.scene);
-});
+// Initialize Three.js elements
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit resolution scaling
 
+// Initialize OrbitControls
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.enablePan = false;
+controls.screenSpacePanning = false;
+
+// Initialize LoadingManager
+const manager = new LoadingManager();
+manager.onStart = () => console.log("Loading started");
+manager.onLoad = () => console.log("All assets loaded");
+
+// Initialize TextureLoader
+const textureLoader = new THREE.TextureLoader(manager);
+
+// Handle Window Resize
+function resizeCanvas() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+}
+window.addEventListener("resize", resizeCanvas);
+
+document.addEventListener('DOMContentLoaded', (event) => {
   // Add Start Screen
   const startScreen = document.createElement('div');
   startScreen.style.position = 'absolute';
@@ -56,23 +62,12 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit resolutio
     document.body.removeChild(startScreen);
     initializeScene();
   });
-function resizeCanvas() {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-}
-window.addEventListener("resize", resizeCanvas);
 
   function initializeScene() {
     const tiltContainer = document.createElement('div');
     tiltContainer.id = 'tilt-container';
     document.body.appendChild(tiltContainer);
 
-    // Setup Three.js Scene
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
     tiltContainer.appendChild(renderer.domElement);
 
     // Add Loading Screen
@@ -91,8 +86,7 @@ window.addEventListener("resize", resizeCanvas);
     document.body.appendChild(loadingScreen);
 
     // Load Background Texture
-    const loader = new THREE.TextureLoader();
-    loader.load(
+    textureLoader.load(
       'assets',
       function (texture) {
         scene.background = texture;
@@ -228,7 +222,6 @@ window.addEventListener("resize", resizeCanvas);
       }
     });
 
-
     // Add Particle System
     const particleGeometry = new THREE.BufferGeometry();
     const particleCount = 1000;
@@ -327,13 +320,6 @@ window.addEventListener("resize", resizeCanvas);
     }
 
     animate();
-    function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
-}
-animate();
-
 
     // 3D Tilt Effect
     document.addEventListener('mousemove', (event) => {
@@ -387,23 +373,13 @@ animate();
         alert(`You clicked on an asteroid with color: ${clickedAsteroid.material.color.getHexString()}`);
       }
     });
-
-    // Handle Window Resize
-    window.addEventListener('resize', () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      renderer.setSize(width, height);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-    });
   }
 });
+
 setTimeout(() => {
     loadHDTextures();
 }, 3000);
 
-
 if (!WebGL.isWebGLAvailable()) {
     alert("WebGL not supported on this device.");
 }
-
