@@ -231,71 +231,77 @@ class SpaceScene {
     }
   }
 
-  setupBloomEffect() {
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.5, 0.4, 0.85
-    );
-    bloomPass.threshold = 0.1;
-    bloomPass.strength = 1.5;
-    bloomPass.radius = 0.5;
+setupBloomEffect() {
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    1.5, 0.4, 0.85
+  );
+  bloomPass.threshold = 0.1;
+  bloomPass.strength = 1.5;
+  bloomPass.radius = 0.5;
 
-    const composer = new EffectComposer(this.renderer);
-    composer.addPass(new RenderPass(this.scene, this.camera));
-    composer.addPass(bloomPass);
+  const composer = new EffectComposer(this.renderer);
+  composer.addPass(new RenderPass(this.scene, this.camera));
+  composer.addPass(bloomPass);
 
-    this.composer = composer;
-  }
+  this.composer = composer;
+}
 
-  setupAnimationLoop() {
-    const animate = () => {
-      requestAnimationFrame(animate);
+setupAnimationLoop() {
+  const animate = () => {
+    requestAnimationFrame(animate);
 
-      if (this.isWarping) {
-        this.warpSpeed += this.acceleration;
-        if (this.warpSpeed > this.maxWarpSpeed) this.warpSpeed = this.maxWarpSpeed;
-        this.camera.position.z -= this.warpSpeed;
+    if (this.isWarping) {
+      this.warpSpeed += this.acceleration;
+      if (this.warpSpeed > this.maxWarpSpeed) this.warpSpeed = this.maxWarpSpeed;
+      this.camera.position.z -= this.warpSpeed;
 
-        if (this.camera.position.z < -1000) {
-          this.isWarping = false;
-          this.warpSpeed = 0;
-          this.camera.position.z = 50;
-        }
+      if (this.camera.position.z < -1000) {
+        this.isWarping = false;
+        this.warpSpeed = 0;
+        this.camera.position.z = 50;
       }
+    }
 
-      if (this.moveLeft) this.camera.position.x -= this.speed;
-      if (this.moveRight) this.camera.position.x += this.speed;
-      if (this.moveUp) this.camera.position.y += this.speed;
-      if (this.moveDown) this.camera.position.y -= this.speed;
+    if (this.moveLeft) this.camera.position.x -= this.speed;
+    if (this.moveRight) this.camera.position.x += this.speed;
+    if (this.moveUp) this.camera.position.y += this.speed;
+    if (this.moveDown) this.camera.position.y -= this.speed;
 
-      this.controls.update();
-      this.composer.render();
-    };
+    this.controls.update();
+    this.composer.render(); // Use the composer instead of the renderer
+  };
 
-    animate();
-  }
+  animate();
+}
 
   setupTiltEffect() {
-    const tiltContainer = document.createElement('div');
-    tiltContainer.id = 'tilt-container';
-    document.body.appendChild(tiltContainer);
+  const tiltContainer = document.createElement('div');
+  tiltContainer.id = 'tilt-container';
+  tiltContainer.style.position = 'absolute';
+  tiltContainer.style.top = '0';
+  tiltContainer.style.left = '0';
+  tiltContainer.style.width = '100%';
+  tiltContainer.style.height = '100%';
+  tiltContainer.style.perspective = '1000px';
+  document.body.appendChild(tiltContainer);
 
-    // Move the renderer's canvas into the tilt container
-    tiltContainer.appendChild(this.renderer.domElement);
+  // Move the renderer's canvas into the tilt container
+  tiltContainer.appendChild(this.renderer.domElement);
 
-    document.addEventListener('mousemove', (event) => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const mouseX = event.clientX;
-      const mouseY = event.clientY;
-      const rotateX = ((centerY - mouseY) / centerY) * 15;
-      const rotateY = ((mouseX - centerX) / centerX) * 15;
+  document.addEventListener('mousemove', (event) => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+    const rotateX = ((centerY - mouseY) / centerY) * 15;
+    const rotateY = ((mouseX - centerX) / centerX) * 15;
 
-      tiltContainer.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    });
-  }
+    tiltContainer.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+}
 
   setupSettingsPanel() {
     const settingsPanel = document.createElement('div');
@@ -319,25 +325,24 @@ class SpaceScene {
     settingsPanel.appendChild(speedSlider);
   }
 
-  setupRaycaster() {
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
+ setupRaycaster() {
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
 
-    window.addEventListener('click', (event) => {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  window.addEventListener('click', (event) => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-      raycaster.setFromCamera(mouse, this.camera);
+    raycaster.setFromCamera(mouse, this.camera);
 
-      const intersects = raycaster.intersectObjects(this.asteroids);
+    const intersects = raycaster.intersectObjects(this.asteroids);
 
-      if (intersects.length > 0) {
-        const clickedAsteroid = intersects[0].object;
-        alert(`You clicked on an asteroid with color: ${clickedAsteroid.material.color.getHexString()}`);
-      }
-    });
-  }
-
+    if (intersects.length > 0) {
+      const clickedAsteroid = intersects[0].object;
+      alert(`You clicked on an asteroid with color: ${clickedAsteroid.material.color.getHexString()}`);
+    }
+  });
+}
   setupEventListeners() {
     window.addEventListener('resize', () => this.resizeCanvas());
 
