@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Space Adventure</title>
-  <link rel="stylesheet" href="styles/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Space Scene 🚀</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; width: 100%; height: 100%; }
+    </style>
 </head>
 <body>
-  <!-- Three.js Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <!-- Post-Processing Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/postprocessing/UnrealBloomPass.js"></script>
-
-  <!-- Main JavaScript File -->
-  <script type="module" src="scripts/main.js"></script>
+    <div id="controls" style="position: absolute; top: 10px; left: 10px; color: white; font-family: Arial, sans-serif;">
+        <p>Use Arrow Keys or Click to Warp!</p>
+    </div>
+    <!-- Include Three.js -->
+    <script src="three.js"></script>
+    <!-- Include your main script -->
+    <script src="main.js"></script>
 </body>
 </html>
