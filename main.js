@@ -1,12 +1,19 @@
 // main.js
 
-// Import Three.js and example modules using relative paths
-import * as THREE from 'three.module.js';
-import { EffectComposer } from './examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from './examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from './examples/jsm/postprocessing/UnrealBloomPass.js';
-import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
+// main.js
+
+// Import the local Three.js (ideally the module version, so rename your file to three.module.js)
+import * as THREE from './three.module.js';
+
+// Load additional modules from a CDN (make sure to use the correct version)
+import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/loaders/GLTFLoader.js';
+
+// ... (rest of your code) ...
+
 
 class SpaceScene {
   constructor() {
