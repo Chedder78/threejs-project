@@ -10,6 +10,18 @@
     <p>Use Arrow Keys or Click to Warp!</p>
   </div>
   <!-- Load your main script as a module -->
+  <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.137.5/build/three.module.js"
+        }
+    }
+</script>
+<script type="module">
+    import * as THREE from 'three';
+    // Your code here
+</script>
+
   <script type="module" src="main.js"></script>
 </body>
 </html>
