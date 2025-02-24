@@ -1,7 +1,5 @@
 // main.js
 
-// main.js
-
 // Import the local Three.js (ideally the module version, so rename your file to three.module.js)
 import * as THREE from './three.module.js';
 
