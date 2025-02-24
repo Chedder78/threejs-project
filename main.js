@@ -8,8 +8,7 @@ import { UnrealBloomPass } from './UnrealBloomPass.module.js';
 import { OrbitControls } from './OrbitControls.module.js';
 import { GLTFLoader } from './GLTFLoader.module.js';
 
-// ... (rest of your SpaceScene class code) ...
-
+// When the DOM is ready, initialize the scene.
 document.addEventListener('DOMContentLoaded', () => {
   if (!THREE.WebGL.isWebGLAvailable()) {
     alert('WebGL not supported on this device.');
@@ -18,9 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-
 class SpaceScene {
   constructor() {
+    // Set up scene, camera, renderer, etc.
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
       75,
@@ -60,6 +59,7 @@ class SpaceScene {
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.0;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Initially append the canvas to the body or a container if preferred.
     document.body.appendChild(this.renderer.domElement);
   }
 
@@ -75,8 +75,10 @@ class SpaceScene {
   }
 
   setupLoadingManager() {
+    // Example: combine logging and loading screen removal if needed.
     this.manager.onStart = () => console.log("Loading started");
-    this.manager.onLoad = () => console.log("All assets loaded");
+    // You can combine multiple actions in onLoad if desired.
+    // This will be overwritten in createLoadingScreen if you want a loading overlay.
   }
 
   createStartScreen() {
@@ -97,6 +99,7 @@ class SpaceScene {
 
     const startButton = document.getElementById('start-button');
     startButton.addEventListener('click', () => {
+      // Optionally add an animation here.
       document.body.removeChild(startScreen);
       this.initializeScene();
     });
@@ -132,21 +135,17 @@ class SpaceScene {
     document.body.appendChild(loadingScreen);
 
     this.manager.onLoad = () => {
+      console.log("All assets loaded");
       document.body.removeChild(loadingScreen);
     };
   }
 
   loadBackgroundTexture() {
-    // Make sure 'background.png.jpg' is in the correct location relative to index.html
     this.textureLoader.load(
       'background.png.jpg',
-      (texture) => {
-        this.scene.background = texture;
-      },
+      (texture) => { this.scene.background = texture; },
       undefined,
-      (err) => {
-        console.error('An error happened while loading the texture.', err);
-      }
+      (err) => { console.error('An error happened while loading the texture.', err); }
     );
   }
 
@@ -211,14 +210,9 @@ class SpaceScene {
 
   createAsteroids() {
     const alienColors = [
-      0x8A2BE2,
-      0x7FFF00,
-      0xFF4500,
-      0x00CED1,
-      0xFFD700,
-      0xADFF2F,
-      0xFF69B4,
-      0xCD5C5C,
+      0x8A2BE2, 0x7FFF00, 0xFF4500,
+      0x00CED1, 0xFFD700, 0xADFF2F,
+      0xFF69B4, 0xCD5C5C,
     ];
     for (let i = 0; i < 15; i++) {
       const geometry = new THREE.SphereGeometry(Math.random() * 2, 32, 32);
@@ -238,9 +232,7 @@ class SpaceScene {
   setupBloomEffect() {
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.5,
-      0.4,
-      0.85
+      1.5, 0.4, 0.85
     );
     bloomPass.threshold = 0.1;
     bloomPass.strength = 1.5;
@@ -286,6 +278,7 @@ class SpaceScene {
     tiltContainer.id = 'tilt-container';
     document.body.appendChild(tiltContainer);
 
+    // Move the renderer's canvas into the tilt container
     tiltContainer.appendChild(this.renderer.domElement);
 
     document.addEventListener('mousemove', (event) => {
@@ -380,6 +373,7 @@ class SpaceScene {
       }
     });
 
+    // This click event triggers warp, but note that it will fire alongside the raycaster click event.
     window.addEventListener('click', () => {
       if (!this.isWarping) {
         this.isWarping = true;
@@ -400,12 +394,3 @@ class SpaceScene {
     this.camera.updateProjectionMatrix();
   }
 }
-
-// When the DOM is ready, initialize the scene.
-document.addEventListener('DOMContentLoaded', () => {
-  if (!THREE.WebGL.isWebGLAvailable()) {
-    alert('WebGL not supported on this device.');
-  } else {
-    new SpaceScene();
-  }
-});
