@@ -2,12 +2,11 @@
 
 // Import modules from local files:
 import * as THREE from './three.module.js';
-import WebGL from './WebGL.js';
 import { OrbitControls } from './OrbitControls.js';
 import { UnrealBloomPass } from './UnrealBloomPass.js';
 import { EffectComposer } from './EffectComposer.js';
 import { RenderPass } from './RenderPass.js';
-
+import { WebGL } from './WebGL.js';
 
 // When the DOM is ready, initialize the scene.
 document.addEventListener('DOMContentLoaded', () => {
