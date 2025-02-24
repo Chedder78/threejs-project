@@ -1,14 +1,22 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.146/build/three.module.js';
-import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.146/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.146/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'https://cdn.jsdelivr.net/npm/three@0.146/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.146/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.146/examples/jsm/loaders/GLTFLoader.js';
+// main.js
+
+// Import Three.js and example modules using relative paths
+import * as THREE from './build/three.module.js';
+import { EffectComposer } from './examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from './examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from './examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 
 class SpaceScene {
   constructor() {
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.controls = null;
     this.manager = new THREE.LoadingManager();
@@ -118,6 +126,7 @@ class SpaceScene {
   }
 
   loadBackgroundTexture() {
+    // Make sure 'background.png.jpg' is in the correct location relative to index.html
     this.textureLoader.load(
       'background.png.jpg',
       (texture) => {
@@ -125,7 +134,7 @@ class SpaceScene {
       },
       undefined,
       (err) => {
-        console.error('An error happened while loading the texture.');
+        console.error('An error happened while loading the texture.', err);
       }
     );
   }
@@ -190,7 +199,16 @@ class SpaceScene {
   }
 
   createAsteroids() {
-    const alienColors = [0x8A2BE2, 0x7FFF00, 0xFF4500, 0x00CED1, 0xFFD700, 0xADFF2F, 0xFF69B4, 0xCD5C5C];
+    const alienColors = [
+      0x8A2BE2,
+      0x7FFF00,
+      0xFF4500,
+      0x00CED1,
+      0xFFD700,
+      0xADFF2F,
+      0xFF69B4,
+      0xCD5C5C,
+    ];
     for (let i = 0; i < 15; i++) {
       const geometry = new THREE.SphereGeometry(Math.random() * 2, 32, 32);
       const color = alienColors[Math.floor(Math.random() * alienColors.length)];
@@ -207,7 +225,12 @@ class SpaceScene {
   }
 
   setupBloomEffect() {
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      1.5,
+      0.4,
+      0.85
+    );
     bloomPass.threshold = 0.1;
     bloomPass.strength = 1.5;
     bloomPass.radius = 0.5;
@@ -261,8 +284,8 @@ class SpaceScene {
       const centerY = height / 2;
       const mouseX = event.clientX;
       const mouseY = event.clientY;
-      const rotateX = (centerY - mouseY) / centerY * 15;
-      const rotateY = (mouseX - centerX) / centerX * 15;
+      const rotateX = ((centerY - mouseY) / centerY) * 15;
+      const rotateY = ((mouseX - centerX) / centerX) * 15;
 
       tiltContainer.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     });
@@ -314,19 +337,35 @@ class SpaceScene {
 
     document.addEventListener('keydown', (event) => {
       switch (event.key) {
-        case 'ArrowLeft': this.moveLeft = true; break;
-        case 'ArrowRight': this.moveRight = true; break;
-        case 'ArrowUp': this.moveUp = true; break;
-        case 'ArrowDown': this.moveDown = true; break;
+        case 'ArrowLeft':
+          this.moveLeft = true;
+          break;
+        case 'ArrowRight':
+          this.moveRight = true;
+          break;
+        case 'ArrowUp':
+          this.moveUp = true;
+          break;
+        case 'ArrowDown':
+          this.moveDown = true;
+          break;
       }
     });
 
     document.addEventListener('keyup', (event) => {
       switch (event.key) {
-        case 'ArrowLeft': this.moveLeft = false; break;
-        case 'ArrowRight': this.moveRight = false; break;
-        case 'ArrowUp': this.moveUp = false; break;
-        case 'ArrowDown': this.moveDown = false; break;
+        case 'ArrowLeft':
+          this.moveLeft = false;
+          break;
+        case 'ArrowRight':
+          this.moveRight = false;
+          break;
+        case 'ArrowUp':
+          this.moveUp = false;
+          break;
+        case 'ArrowDown':
+          this.moveDown = false;
+          break;
       }
     });
 
@@ -351,7 +390,7 @@ class SpaceScene {
   }
 }
 
-// Initialize the scene
+// When the DOM is ready, initialize the scene.
 document.addEventListener('DOMContentLoaded', () => {
   if (!THREE.WebGL.isWebGLAvailable()) {
     alert('WebGL not supported on this device.');
