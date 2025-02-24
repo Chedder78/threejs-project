@@ -2,11 +2,6 @@
 
 // Import modules from local files:
 import * as THREE from './three.module.js';
-import { EffectComposer } from './EffectComposer.module.js';
-import { RenderPass } from './RenderPass.module.js';
-import { UnrealBloomPass } from './UnrealBloomPass.module.js';
-import { OrbitControls } from './OrbitControls.module.js';
-import { GLTFLoader } from './GLTFLoader.module.js';
 
 // When the DOM is ready, initialize the scene.
 document.addEventListener('DOMContentLoaded', () => {
