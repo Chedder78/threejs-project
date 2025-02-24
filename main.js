@@ -2,17 +2,19 @@
 
 // Import modules from local files:
 import * as THREE from './three.module.js';
-import { isWebGLAvailable } from './WebGL.js';
+import WebGL from './WebGL.js';
+
 
 
 // When the DOM is ready, initialize the scene.
 document.addEventListener('DOMContentLoaded', () => {
-  if (!isWebGLAvailable()) {
+  if (!WebGL.isWebGLAvailable()) {
     alert('WebGL not supported on this device.');
   } else {
     new SpaceScene();
   }
 });
+
 
 class SpaceScene {
   constructor() {
