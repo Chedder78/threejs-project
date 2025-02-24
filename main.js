@@ -1,7 +1,7 @@
 // main.js
 
 // Import Three.js and example modules using relative paths
-import * as THREE from './build/three.module.js';
+import * as THREE from 'three.module.js';
 import { EffectComposer } from './examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './examples/jsm/postprocessing/UnrealBloomPass.js';
