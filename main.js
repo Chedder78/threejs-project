@@ -1,7 +1,7 @@
 // main.js
 
 // Import modules from local files:
-import * as THREE from 'three.module.js';
+import * as THREE from 'Three.js';
 import { OrbitControls } from 'OrbitControls.js';
 import { UnrealBloomPass } from 'UnrealBloomPass.js';
 import { EffectComposer } from 'EffectComposer.js';
