@@ -7,7 +7,7 @@ import { isWebGLAvailable } from './WebGL.js';
 
 // When the DOM is ready, initialize the scene.
 document.addEventListener('DOMContentLoaded', () => {
-  if (!THREE.WebGL.isWebGLAvailable()) {
+  if (!isWebGLAvailable()) {
     alert('WebGL not supported on this device.');
   } else {
     new SpaceScene();
