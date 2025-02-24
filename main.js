@@ -1,16 +1,22 @@
 // main.js
 
-// Import the local Three.js (ideally the module version, so rename your file to three.module.js)
+// Import modules from local files:
 import * as THREE from './three.module.js';
+import { EffectComposer } from './EffectComposer.module.js';
+import { RenderPass } from './RenderPass.module.js';
+import { UnrealBloomPass } from './UnrealBloomPass.module.js';
+import { OrbitControls } from './OrbitControls.module.js';
+import { GLTFLoader } from './GLTFLoader.module.js';
 
-// Load additional modules from a CDN (make sure to use the correct version)
-import { EffectComposer } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.146.0/examples/jsm/loaders/GLTFLoader.js';
+// ... (rest of your SpaceScene class code) ...
 
-// ... (rest of your code) ...
+document.addEventListener('DOMContentLoaded', () => {
+  if (!THREE.WebGL.isWebGLAvailable()) {
+    alert('WebGL not supported on this device.');
+  } else {
+    new SpaceScene();
+  }
+});
 
 
 class SpaceScene {
