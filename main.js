@@ -1,12 +1,12 @@
 // main.js
 
 // Import modules from local files:
-import * as THREE from 'Three.js';
-import { OrbitControls } from 'OrbitControls.js';
-import { UnrealBloomPass } from 'UnrealBloomPass.js';
-import { EffectComposer } from 'EffectComposer.js';
-import { RenderPass } from 'RenderPass.js';
-import { WebGL } from 'WebGL.js';
+import * as THREE from './three.module.js';
+import { OrbitControls } from './OrbitControls.module.js';
+import { UnrealBloomPass } from './UnrealBloomPass.module.js';
+import { EffectComposer } from './EffectComposer.module.js';
+import { RenderPass } from './RenderPass.module.js';
+import WebGL from './WebGL.js';  // WebGL.js is a default export
 
 // When the DOM is ready, initialize the scene.
 document.addEventListener('DOMContentLoaded', () => {
@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     new SpaceScene();
   }
 });
+
+// ... rest of your SpaceScene class code ...
+
 
 
 class SpaceScene {
