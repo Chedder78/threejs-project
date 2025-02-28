@@ -1,12 +1,12 @@
 // main.js
-
-// Import modules from local files:
 import * as THREE from './three.module.js';
 import { OrbitControls } from './OrbitControls.module.js';
-import { UnrealBloomPass } from './UnrealBloomPass.module.js';
 import { EffectComposer } from './EffectComposer.module.js';
 import { RenderPass } from './RenderPass.module.js';
-import WebGL from './WebGL.js';  // WebGL.js is a default export
+import { UnrealBloomPass } from './UnrealBloomPass.module.js';
+import { CopyShader } from './CopyShader.module.js';
+import { ShaderPass } from './ShaderPass.module.js';
+import { LuminosityHighPassShader } from './LuminosityHighPassShader.module.js';
 
 // When the DOM is ready, initialize the scene.
 document.addEventListener('DOMContentLoaded', () => {
