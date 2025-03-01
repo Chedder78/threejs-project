@@ -5,13 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Three.js Space Scene 🚀</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" href="data:,"> <!-- Suppress favicon error -->
+  <link rel="icon" href="about:blank"> <!-- Properly suppress favicon error -->
 </head>
 <body>
-  <!-- Optional: you can include a controls div here if needed -->
-  <div id="controls" style="position: absolute; top: 10px; left: 10px; color: white; font-family: Arial, sans-serif;">
+
+  <!-- Controls UI -->
+  <div id="controls">
     <p>Use Arrow Keys or Click to Warp!</p>
   </div>
-  <script type="module" src="main.js"></script>
+
+  <!-- WebGL Check & Three.js Scene Initialization -->
+  <script type="module">
+    import WebGL from "./WebGL.module.js";
+    if (WebGL.isWebGL2Available()) {
+      import("./main.js"); // Load main.js only if WebGL2 is available
+    } else {
+      document.body.appendChild(WebGL.getWebGL2ErrorMessage());
+    }
+  </script>
+
 </body>
 </html>
