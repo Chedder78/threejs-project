@@ -1,22 +1,6 @@
-import * as THREE from './three.module.js';
-import { OrbitControls } from './OrbitControls.module.js';
-import { EffectComposer } from './EffectComposer.module.js';
-import { RenderPass } from './RenderPass.module.js';
-import { UnrealBloomPass } from './UnrealBloomPass.module.js';
-
-// Ensure WebGL is available before initializing the scene
-document.addEventListener('DOMContentLoaded', () => {
-  try {
-    const testRenderer = new THREE.WebGLRenderer();
-    new SpaceScene();
-  } catch (error) {
-    alert('WebGL not supported on this device.');
-  }
-});
-
 class SpaceScene {
   constructor() {
-    // Core Three.js Components
+    // === Three.js Essentials ===
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
       75,
@@ -26,7 +10,7 @@ class SpaceScene {
     );
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
 
-    // Other properties
+    // === Properties ===
     this.controls = null;
     this.asteroids = [];
     this.speed = 2;
@@ -35,19 +19,20 @@ class SpaceScene {
     this.maxWarpSpeed = 50;
     this.acceleration = 0.5;
 
-    // Loading Manager
+    // === Loaders ===
     this.manager = new THREE.LoadingManager();
     this.textureLoader = new THREE.TextureLoader(this.manager);
 
+    // === Init call ===
     this.init();
   }
 
   init() {
-    this.setupRenderer();
-    this.setupCamera();
-    this.setupControls();
-    this.setupEventListeners();
-    this.createStartScreen();
+    this.setupRenderer(); // Renderer setup
+    this.setupCamera(); // Camera setup
+    this.setupControls(); // Controls setup
+    this.setupEventListeners(); // Warp key listener
+    this.createStartScreen(); // Overlay start button
   }
 
   setupRenderer() {
@@ -65,8 +50,21 @@ class SpaceScene {
 
   setupControls() {
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.enableDamping = true;
+
+    // === Disable these temporarily to avoid clashing with warp movement ===
+    this.controls.enableDamping = false;
     this.controls.enablePan = false;
+    this.controls.enableZoom = false;
+    this.controls.enableRotate = false;
+  }
+
+  // === Warp key listener (adds keydown event to trigger warp) ===
+  setupEventListeners() {
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'KeyW') { // Press 'W' key to trigger warp
+        this.isWarping = true;
+      }
+    });
   }
 
   createStartScreen() {
@@ -89,15 +87,16 @@ class SpaceScene {
   }
 
   initializeScene() {
-    this.createLoadingScreen();
+    this.createLoadingScreen(); 
     this.loadBackgroundTexture();
     this.setupLighting();
     this.createStarField();
     this.createNebula();
     this.createAsteroids();
     this.setupBloomEffect();
-    this.setupAnimationLoop();
+    this.setupAnimationLoop(); // Your game/render loop
     this.setupSettingsPanel();
+    this.setupDebugHUD(); // <-- ADD debug HUD here
   }
 
   createLoadingScreen() {
@@ -116,8 +115,9 @@ class SpaceScene {
   }
 
   loadBackgroundTexture() {
+    // If background.jpg fails, console will show error but scene will still work
     this.textureLoader.load(
-      'background.jpg',  // Ensure correct filename
+      'background.jpg',
       (texture) => { this.scene.background = texture; },
       undefined,
       (err) => { console.error('Error loading background:', err); }
@@ -172,22 +172,27 @@ class SpaceScene {
     }
   }
 
+  // === TEMPORARY bloom tweak ===
   setupBloomEffect() {
     this.composer = new EffectComposer(this.renderer);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
 
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.5, 0.4, 0.85
+      0.8, // reduced strength to avoid washing out scene
+      0.4,
+      0.65
     );
 
     this.composer.addPass(bloomPass);
   }
 
+  // === Main animation loop + warp logic ===
   setupAnimationLoop() {
     const animate = () => {
       requestAnimationFrame(animate);
 
+      // Warp effect
       if (this.isWarping) {
         this.warpSpeed += this.acceleration;
         if (this.warpSpeed > this.maxWarpSpeed) this.warpSpeed = this.maxWarpSpeed;
@@ -200,11 +205,26 @@ class SpaceScene {
         }
       }
 
+      // OrbitControls still updates position/rotation
       this.controls.update();
       this.composer.render();
+      
+      // === Debug text updates here ===
+      this.debugText.innerText = `Camera Z: ${this.camera.position.z.toFixed(2)} | WarpSpeed: ${this.warpSpeed.toFixed(2)}`;
     };
 
     animate();
+  }
+
+  // === Debug HUD for camera and warp speed ===
+  setupDebugHUD() {
+    this.debugText = document.createElement('div');
+    Object.assign(this.debugText.style, {
+      position: 'absolute', bottom: '10px', left: '10px',
+      color: 'white', fontSize: '14px', backgroundColor: 'rgba(0,0,0,0.5)',
+      padding: '5px', borderRadius: '5px'
+    });
+    document.body.appendChild(this.debugText);
   }
 
   setupSettingsPanel() {
